@@ -1,8 +1,8 @@
 <?php
 
-//заменить строку после ?: путём до каталога local при необходимости
+//заменить $local_path путём до каталога local
 
-$local_path = (getenv('LOCAL_PATH') ?: 'cg/local');
+$local_path = 'cg/local';
 
 $rules = [
     '@PSR2' => true,
