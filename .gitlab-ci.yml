@@ -1,0 +1,58 @@
+stages:
+  - dev
+
+.dev_check_merge_request: &dev_check_merge_request |
+  noMergedBranches=$(git branch -a --no-merged)
+  for checkBranch in $noMergedBranches
+  do
+  echo no merged branch is $checkBranch
+  if [ $checkBranch == "remotes/origin/dev" ]; then
+  echo No merge with $checkBranch
+  exit 1
+  fi
+  done
+
+dev check merge request:
+  stage: dev
+  only:
+    - merge_requests
+ environment:
+    name: dev
+  script:
+    - echo START dev merge request
+    - *dev_check_merge_request
+    - echo END dev merge request
+
+dev lint text merge request:
+  image: zedsh/php-lint-fix
+  stage: dev
+  only:
+    - merge_requests
+  before_script:
+    - echo Start
+  environment:
+    name: dev
+  script:
+    - echo START Test lint
+    - php-cs-fixer fix --dry-run --diff | tee cs-fixer.log
+    - echo END Test lint
+  artifacts:
+    when: on_failure
+    expire_in: 1 day
+    paths:
+      - cs-fixer.log
+dev lint fix merge request:
+  image: zedsh/php-lint-fix
+  stage: dev
+  only:
+    - merge_requests
+  when: manual
+  before_script:
+    - echo Start
+  environment:
+    name: dev
+  script:
+    - echo START Fix lint
+    - php-cs-fixer fix
+    - echo END Fix lint
+
