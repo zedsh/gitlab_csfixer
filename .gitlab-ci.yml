@@ -1,6 +1,11 @@
 stages:
   - dev
 
+before_script:
+  - apk update
+  - apk add --no-cache git
+
+
 .dev_check_merge_request: &dev_check_merge_request |
   noMergedBranches=$(git branch -a --no-merged)
   for checkBranch in $noMergedBranches
@@ -16,12 +21,12 @@ dev check merge request:
   stage: dev
   only:
     - merge_requests
- environment:
+  environment:
     name: dev
   script:
-    - echo START dev merge request
-    - *dev_check_merge_request
-    - echo END dev merge request
+      - echo START dev merge request
+      - *dev_check_merge_request
+      - echo END dev merge request
 
 dev lint text merge request:
   image: zedsh/php-lint-fix
