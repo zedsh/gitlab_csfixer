@@ -1,5 +1,7 @@
 stages:
   - dev
+services:
+  - docker:dind
 
 before_script:
   - apk update
@@ -46,18 +48,4 @@ dev lint text merge request:
     expire_in: 1 day
     paths:
       - cs-fixer.log
-dev lint fix merge request:
-  image: zedsh/php-lint-fix
-  stage: dev
-  only:
-    - merge_requests
-  when: manual
-  before_script:
-    - echo Start
-  environment:
-    name: dev
-  script:
-    - echo START Fix lint
-    - php-cs-fixer fix
-    - echo END Fix lint
 
